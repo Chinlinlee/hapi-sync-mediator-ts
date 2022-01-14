@@ -1,0 +1,22 @@
+{
+  "name": "hapi-to-burni",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "log4js": "^6.3.0",
+    "pg": "^8.7.1",
+    "sequelize": "^6.13.0"
+  },
+  "devDependencies": {
+    "sequelize-typescript": "^2.1.2"
+  }
+}
