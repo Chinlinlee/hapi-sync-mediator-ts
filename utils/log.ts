@@ -1,3 +1,4 @@
 import { configure, getLogger } from 'log4js';
 configure("./config/log4js.json");
-export const log = getLogger('app');
+let myLog = getLogger('hapi-to-burni');
+export const log = myLog;

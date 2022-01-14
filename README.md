@@ -1,3 +1,13 @@
+# hapi-to-burni
+
+sync hapi FHIR data from database (`hfj_res_ver`) to another FHIR server.
+
+Note: **Only support postgres database.**
+
+## Configuration
+- **create `config.ts` in `config` folder**
+- you can config refer to `config/config.template.ts`
+```typescript=
 export const config = {
     db : {
         service : "postgres" , //only support postgres now
@@ -14,3 +24,9 @@ export const config = {
         method: "put" //using `create` or `update` to sync data
     }
 }
+```
+
+## RUN
+```bash
+ts-node index.ts
+```

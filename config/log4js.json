@@ -14,12 +14,18 @@
             "type": "logLevelFilter",
             "level": "ERROR",
             "appender": "errorFile"
+        },
+        "infos": {
+            "type": "logLevelFilter",
+            "level": "INFO",
+            "maxLevel": "INFO",
+            "appender": "hapi-to-burni"
         }
     },
     "categories": {
         "default": {
             "appenders": [
-                "hapi-to-burni",
+                "infos",
                 "errors"
             ],
             "level": "DEBUG"
