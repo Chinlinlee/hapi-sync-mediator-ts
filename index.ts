@@ -12,12 +12,12 @@ async function isNeedSync(resource:IResource , resourceVer:IResourceVer): Promis
 }
 
 (async () => {
+    let successCount = 0;
     let limit = config.sync.limit;
     let offset = 0;
     let resourceItemList = await getResourcesByResourceType(limit , offset);
     let resourceCount = await getResourcesCountByResourceType();
     while(resourceItemList.length > 0) {
-        let successCount = 0;
         for (let i = 0 ; i < resourceItemList.length ; i++) {
             let resourceItem = resourceItemList[i];
             let resource = await getResource(resourceItem.res_id, resourceItem.res_ver);
