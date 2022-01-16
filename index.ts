@@ -11,13 +11,18 @@ async function isNeedSync(resource:IResource , resourceVer:IResourceVer): Promis
     return resource.res_ver !== resourceVer.res_ver || syncedResource.length == 0;
 }
 
-(async () => {
-    let successCount = 0;
-    let limit = config.sync.limit;
-    let offset = 0;
-    let resourceItemList = await getResourcesByResourceType(limit , offset);
-    let resourceCount = await getResourcesCountByResourceType();
-    while(resourceItemList.length > 0) {
+async function doWorks(workerList: Array<any>) {
+    let doWorkList = [];
+    while(workerList.length > 0) {
+        doWorkList = workerList.slice(0,config.sync.totalWorker);
+        workerList.splice(0,config.sync.totalWorker);
+        await Promise.allSettled(doWorkList.map(f=> f()))
+    }
+}
+
+function addWork(worker: Array<any>, resourceItemList: Array<any>, limit: number, offset:number) {
+    worker.push(async ()=> {
+        let successCount = 0;
         for (let i = 0 ; i < resourceItemList.length ; i++) {
             let resourceItem = resourceItemList[i];
             let resource = await getResource(resourceItem.res_id, resourceItem.res_ver);
@@ -37,9 +42,20 @@ async function isNeedSync(resource:IResource , resourceVer:IResourceVer): Promis
                 successCount++;
             }
         }
+        log.info(`convert ${offset}~${offset+limit} successfully ${successCount}/${limit}`);
+    });
+}
+
+(async () => {
+    let worker:Array<any> = [];
+    let limit = config.sync.limit;
+    let offset = 0;
+    let resourceItemList = await getResourcesByResourceType(limit , offset);
+    //let resourceCount = await getResourcesCountByResourceType();
+    while(resourceItemList.length > 0) {
+        addWork(worker, resourceItemList, limit, offset);
         offset += limit;
-        log.info(`convert successfully ${successCount}/${resourceCount}`);
         resourceItemList = await getResourcesByResourceType(limit , offset);
     }
-    process.exit(0);
+    await doWorks(worker);
 })();
