@@ -58,4 +58,5 @@ function addWork(worker: Array<any>, resourceItemList: Array<any>, limit: number
         offset += limit;
         resourceItemList = await getResourcesByResourceType(limit , offset);
     }
+    await doWorks(worker);
 })();
