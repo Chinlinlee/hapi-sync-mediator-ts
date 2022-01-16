@@ -53,9 +53,9 @@ function addWork(worker: Array<any>, resourceItemList: Array<any>, limit: number
     let resourceItemList = await getResourcesByResourceType(limit , offset);
     //let resourceCount = await getResourcesCountByResourceType();
     while(resourceItemList.length > 0) {
+        if (worker.length == config.sync.totalWorker) await doWorks(worker);
         addWork(worker, resourceItemList, limit, offset);
         offset += limit;
         resourceItemList = await getResourcesByResourceType(limit , offset);
     }
-    await doWorks(worker);
 })();
