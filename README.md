@@ -1,4 +1,4 @@
-# hapi-to-burni
+# hapi-sync-mediator
 
 sync hapi FHIR data from database (`hfj_res_ver`) to another FHIR server.
 
