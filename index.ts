@@ -42,7 +42,7 @@ function addWork(worker: Array<any>, resourceItemList: Array<any>, limit: number
                 successCount++;
             }
         }
-        log.info(`convert ${offset}~${offset+limit} successfully ${successCount}/${limit}`);
+        log.info(`convert ${offset}~${offset+limit} successfully ${successCount}/${resourceItemList.length}`);
     });
 }
 
