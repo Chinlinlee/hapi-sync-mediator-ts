@@ -7,9 +7,7 @@ const sequelize = new Sequelize(config.db.database  , config.db.username , confi
     // logging : false
 });
 
-require('./hfj_res_ver')(sequelize);
 require('./hfj_res_sync')(sequelize);
-require('./hfj_resource')(sequelize);
 //exec this function when you init
 
 /**
