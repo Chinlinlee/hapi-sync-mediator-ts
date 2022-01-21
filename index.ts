@@ -1,16 +1,27 @@
 import { convertLOBToJson } from './utils/lob';
-import { getResourcesByResourceType, getResourcesCountByResourceType, getResource } from './utils/res';
+import { getResources, getResource } from './utils/res';
 import { getSyncedResourceById, addSyncResource, doSync } from './utils/res_sync'
 import { config } from './config/config';
 import { IResource } from './models/resource';
-import { IResourceVer } from './models/resource_ver';
 import { log } from './utils/log';
 
-async function isNeedSync(resource:IResource , resourceVer:IResourceVer): Promise<boolean> {
+/**
+ * Check source FHIR Server content is need to sync to target FHIR Server.
+ * @param resource 
+ * @param resourceVer 
+ */
+async function isNeedSync(resource:IResource): Promise<boolean> {
     let syncedResource = await getSyncedResourceById(resource.res_id);
-    return resource.res_ver !== resourceVer.res_ver || syncedResource.length == 0;
+    if (syncedResource.length !== 0 ) {
+        return syncedResource[0].res_ver === resource.res_ver;
+    }
+    return true;
 }
 
+/**
+ * 執行被丟入陣列的promise function
+ * @param workerList 
+ */
 async function doWorks(workerList: Array<any>) {
     let doWorkList = [];
     while(workerList.length > 0) {
@@ -20,6 +31,13 @@ async function doWorks(workerList: Array<any>) {
     }
 }
 
+/**
+ * 新增執行同步資料的function到陣列裡
+ * @param worker 當前待執行promise function陣列
+ * @param resourceItemList 當前hfj_resource資料
+ * @param limit SQL query data limit
+ * @param offset SQL query data offset
+ */
 function addWork(worker: Array<any>, resourceItemList: Array<any>, limit: number, offset:number) {
     worker.push(async ()=> {
         let successCount = 0;
@@ -27,7 +45,7 @@ function addWork(worker: Array<any>, resourceItemList: Array<any>, limit: number
             let resourceItem = resourceItemList[i];
             let resource = await getResource(resourceItem.res_id, resourceItem.res_ver);
             let syncResourceType = resourceItem.res_type;
-            let needSync = await isNeedSync(resourceItem, resource);
+            let needSync = await isNeedSync(resourceItem);
             if (needSync) {
                 let res_id = resourceItem.res_id;
                 let lobJson = await convertLOBToJson(resource);
@@ -46,17 +64,27 @@ function addWork(worker: Array<any>, resourceItemList: Array<any>, limit: number
     });
 }
 
+/**
+ * 程式主體main
+ */
 (async () => {
     let worker:Array<any> = [];
     let limit = config.sync.limit;
     let offset = 0;
-    let resourceItemList = await getResourcesByResourceType(limit , offset);
+    //取得第一批hfj_resource資料
+    let resourceItemList = await getResources(limit , offset);
     //let resourceCount = await getResourcesCountByResourceType();
+
+    //執行直到pagination hfj_resource資料長度為0
     while(resourceItemList.length > 0) {
+        //當待執行promise function陣列長度與設定檔最大併行數量相同時，併行執行所有promise function
         if (worker.length == config.sync.totalWorker) await doWorks(worker);
         addWork(worker, resourceItemList, limit, offset);
+        //When offset is 0, limit is 100 that 0~100, after first processing this will be next page, offset is 100, limit is 100 = 100~200
         offset += limit;
-        resourceItemList = await getResourcesByResourceType(limit , offset);
+        //get next page `hfj_resource` data
+        resourceItemList = await getResources(limit , offset);
     }
+    //do remain works
     await doWorks(worker);
 })();

@@ -9,8 +9,8 @@
   },
   "standard-version": {
     "skip": {
-        "tag": true,
-        "commit": true
+      "tag": true,
+      "commit": true
     }
   },
   "keywords": [],
@@ -23,6 +23,7 @@
     "sequelize": "^6.13.0"
   },
   "devDependencies": {
-    "sequelize-typescript": "^2.1.2"
+    "sequelize-typescript": "^2.1.2",
+    "typedoc": "^0.22.11"
   }
 }

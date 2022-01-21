@@ -16,9 +16,7 @@ require('./hfj_res_sync')(sequelize);
 module.exports = (async function () {
     try {
         await sequelize.authenticate();
-        await sequelize.models['hfj_res_ver'].sync();
         await sequelize.models['hfj_res_sync'].sync();
-        await sequelize.models['hfj_resource'].sync();
         console.log('Connection has been established successfully.');
         return sequelize;
     } catch (error) {

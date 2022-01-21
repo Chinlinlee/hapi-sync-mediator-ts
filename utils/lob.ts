@@ -1,5 +1,7 @@
 import stream from 'stream';
 import zlib from 'zlib';
+
+//Gunzip file : https://stackoverflow.com/questions/12148948/how-do-i-ungzip-decompress-a-nodejs-requests-module-gzip-response-body
 export const convertLOBToJson = (iLOB: any) => {
     return new Promise((resolve, reject)=> {
         let buffer: any[] = [];

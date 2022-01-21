@@ -4,6 +4,10 @@ import { config } from "../config/config";
 import { IResource } from "../models/resource";
 import { log } from '../utils/log';
 
+/**
+ * 取得hfj_res_sync某Resource id已轉置的資料，如果沒資料回傳空陣列[]
+ * @param resId Resource id
+ */
 export const getSyncedResourceById = async (resId: number)=> {
     const sequelize = await require('../models/sql/');
     let item = await sequelize.query(`SELECT res_id, res_ver FROM hfj_res_sync WHERE res_id=${resId};`, {
@@ -12,6 +16,12 @@ export const getSyncedResourceById = async (resId: number)=> {
     return item;
 }
 
+/**
+ * 新增hfj_res_sync已轉置資料
+ * @param resourceType resource type e.g. Patient
+ * @param syncId The target FHIR Server response id 
+ * @param resource hfj_resource content
+ */
 export const addSyncResource = async (resourceType: string, syncId: string, resource: IResource) => {
     let syncResource: any = resource;
     try {
@@ -46,6 +56,11 @@ export const addSyncResource = async (resourceType: string, syncId: string, reso
 }
 
 export const doSync: any = {
+    /** Using PUT `update` Web API to create Resource on target FHIR Server
+     * @param resourceType resource type e.g. Patient
+     * @param resId Resource id
+     * @param resJson Resource JSON content
+     */
     "put": async (resourceType:string, resId: number, resJson: any)=> {
         try {
             let requestConfig: any = {};
@@ -63,6 +78,11 @@ export const doSync: any = {
             return false;
         }
     },
+    /** Using POST `create` Web API to create Resource on target FHIR Server
+     * @param resourceType resource type e.g. Patient
+     * @param resId Resource id
+     * @param resJson Resource JSON content
+     */
     "post": async (resourceType:string, resId: number, resJson: any) => {
         try {
             let requestConfig: any = {};
