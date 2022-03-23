@@ -9,10 +9,12 @@ import { log } from '../utils/log';
  * @param resId Resource id
  */
 export const getSyncedResourceById = async (resId: number)=> {
+    log.info(`Do SQL Command: SELECT res_id, res_ver FROM hfj_res_sync WHERE res_id=${resId};`);
     const sequelize = await require('../models/sql/');
     let item = await sequelize.query(`SELECT res_id, res_ver FROM hfj_res_sync WHERE res_id=${resId};`, {
         type: QueryTypes.SELECT
     });
+    log.info(`Do SQL Command Successful: SELECT res_id, res_ver FROM hfj_res_sync WHERE res_id=${resId};`);
     return item;
 }
 
@@ -28,19 +30,25 @@ export const addSyncResource = async (resourceType: string, syncId: string, reso
         syncResource["res_type"] = resourceType;
         syncResource["sync_id"] = syncId;
         const sequelize: Sequelize = await require('../models/sql/');
+        log.info(`Do Sequelize: hfj_res_sync.findOne`);
         let syncedResource = await sequelize.models["hfj_res_sync"].findOne({
             where: {
                 res_id : resource.res_id
             }
         });
+        log.info(`Do Sequelize Successful: hfj_res_sync.findOne`);
         if (syncedResource) {
+            log.info(`Do Sequelize: hfj_res_sync.update`);
             await sequelize.models["hfj_res_sync"].update(syncResource , {
                 where: {
                     res_id : resource.res_id
                 }
             });
+            log.info(`Do Sequelize Successful: hfj_res_sync.update`);
         } else {
+            log.info(`Do Sequelize: hfj_res_sync.create`);
             await sequelize.models["hfj_res_sync"].create(syncResource);
+            log.info(`Do Sequelize Successful: hfj_res_sync.create`);
         }
         return {
             status: true,

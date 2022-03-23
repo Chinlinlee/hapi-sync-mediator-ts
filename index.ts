@@ -11,10 +11,12 @@ import { log } from './utils/log';
  * @param resourceVer 
  */
 async function isNeedSync(resource:IResource): Promise<boolean> {
+    log.info(`Check Resource Is Need to Sync`);
     let syncedResource = await getSyncedResourceById(resource.res_id);
     if (syncedResource.length !== 0 ) {
         return syncedResource[0].res_ver === resource.res_ver;
     }
+    log.info(`Finished! Check Resource Is Need to Sync`);
     return true;
 }
 
@@ -49,7 +51,9 @@ function addWork(worker: Array<any>, resourceItemList: Array<any>, limit: number
             if (needSync) {
                 let res_id = resourceItem.res_id;
                 let lobJson = await convertLOBToJson(resource);
+                log.info(`doSync Start`);
                 let syncResData = await doSync[config.sync.method](syncResourceType, res_id, lobJson);
+                log.info(`doSync Finished`);
                 if (syncResData) {
                     let addResult = await addSyncResource(syncResourceType, syncResData.id, resource);
                     if (addResult.status) {

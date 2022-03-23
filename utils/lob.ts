@@ -1,9 +1,11 @@
 import stream from 'stream';
 import zlib from 'zlib';
+import { log } from './log';
 
 //Gunzip file : https://stackoverflow.com/questions/12148948/how-do-i-ungzip-decompress-a-nodejs-requests-module-gzip-response-body
 export const convertLOBToJson = (iLOB: any) => {
     return new Promise((resolve, reject)=> {
+        log.info(`Do convertLOBToJson`);
         let buffer: any[] = [];
         let bufferStream = new stream.PassThrough();
     
@@ -22,6 +24,7 @@ export const convertLOBToJson = (iLOB: any) => {
             //callback(null, buffer.join(""));
             let bufferStr = buffer.join("");
             let jsonItem = JSON.parse(bufferStr);
+            log.info(`Do convertLOBToJson Successful!`);
             resolve(jsonItem);
         }).on("error", function (e) {
             //callback(e);
