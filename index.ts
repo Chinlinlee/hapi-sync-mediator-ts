@@ -1,6 +1,6 @@
 import { convertLOBToJson } from './utils/lob';
 import { getResources, getResource } from './utils/res';
-import { getSyncedResourceById, addSyncResource, doSync } from './utils/res_sync'
+import { getSyncedResourceById, addSyncResource, doSync, createResSyncIndex } from './utils/res_sync'
 import { config } from './config/config';
 import { IResource } from './models/resource';
 import { log } from './utils/log';
@@ -72,6 +72,7 @@ function addWork(worker: Array<any>, resourceItemList: Array<any>, limit: number
  * 程式主體main
  */
 (async () => {
+    await createResSyncIndex();
     let worker:Array<any> = [];
     let limit = config.sync.limit;
     let offset = 0;

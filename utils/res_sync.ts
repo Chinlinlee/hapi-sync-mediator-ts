@@ -4,6 +4,19 @@ import { config } from "../config/config";
 import { IResource } from "../models/resource";
 import { log } from '../utils/log';
 
+export const createResSyncIndex = async () => {
+    try {
+        const sequelize = await require('../models/sql/');
+        await sequelize.query(`CREATE INDEX IF NOT EXISTS hfj_res_sync_res_idx ON hfj_res_sync (res_id);`, {
+            type: QueryTypes.RAW
+        });
+        return true;
+    } catch(e) {
+        console.error(e);
+        throw e;
+    }
+}
+
 /**
  * 取得hfj_res_sync某Resource id已轉置的資料，如果沒資料回傳空陣列[]
  * @param resId Resource id
