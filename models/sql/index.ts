@@ -1,10 +1,17 @@
 import { Sequelize, Op, Dialect } from 'sequelize';
 import { config } from '../../config/config';
 
+let dbOptions = {
+    host: config.db.hostName,
+    dialect:  config.db.service as Dialect, //mssql
+    logging: false
+};
+if (process.env.NODE_ENV == "dev" || process.env.NODE_ENV === "development") {
+    dbOptions.logging = true;
+}
 const sequelize = new Sequelize(config.db.database  , config.db.username , config.db.password , {
     host: config.db.hostName,
     dialect:  config.db.service as Dialect, //mssql
-    // logging : false
 });
 
 require('./hfj_res_sync')(sequelize);

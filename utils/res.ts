@@ -10,7 +10,7 @@ import { IResource } from "../models/resource";
 export const getResources = async (limit: number, offset: number): Promise<Array<IResource>> => {
     log.info(`Do SQL Command: SELECT res_type, res_id, res_ver FROM hfj_resource LIMIT ${limit} OFFSET ${offset};`);
     const sequelize = await require('../models/sql/');
-    let item = await sequelize.query(`SELECT res_type, res_id, res_ver FROM hfj_resource LIMIT ${limit} OFFSET ${offset};`, {
+    let item = await sequelize.query(`SELECT res_type, res_id, res_ver FROM hfj_resource ORDER BY res_id LIMIT ${limit} OFFSET ${offset};`, {
         type: QueryTypes.SELECT
     });
     log.info(`Do SQL Command Successful: SELECT res_type, res_id, res_ver FROM hfj_resource LIMIT ${limit} OFFSET ${offset};`);
