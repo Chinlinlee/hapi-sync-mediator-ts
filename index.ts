@@ -14,7 +14,8 @@ async function isNeedSync(resource:IResource): Promise<boolean> {
     log.info(`Check Resource Is Need to Sync`);
     let syncedResource = await getSyncedResourceById(resource.res_id);
     if (syncedResource.length !== 0 ) {
-        return syncedResource[0].res_ver === resource.res_ver;
+        log.info(`Finished! Check Resource Is Need to Sync, The synced resource ver: ${syncedResource[0].res_ver}, resource ver: ${resource.res_ver}`);
+        return syncedResource[0].res_ver !== resource.res_ver;
     }
     log.info(`Finished! Check Resource Is Need to Sync`);
     return true;
