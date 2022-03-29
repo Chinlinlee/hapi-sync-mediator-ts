@@ -9,10 +9,7 @@ let dbOptions = {
 if (process.env.NODE_ENV == "dev" || process.env.NODE_ENV === "development") {
     dbOptions.logging = true;
 }
-const sequelize = new Sequelize(config.db.database  , config.db.username , config.db.password , {
-    host: config.db.hostName,
-    dialect:  config.db.service as Dialect, //mssql
-});
+const sequelize = new Sequelize(config.db.database  , config.db.username , config.db.password , dbOptions);
 
 require('./hfj_res_sync')(sequelize);
 //exec this function when you init
